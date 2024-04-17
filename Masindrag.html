@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Uploader</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .password-form {
+      text-align: center;
+    }
+    .password-form label {
+      font-size: 20px;
+    }
+    .password-form input[type="password"] {
+      font-size: 16px;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    .password-form button {
+      font-size: 16px;
+      padding: 10px 20px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    #drop-area {
+      border: 2px dashed #ccc;
+      border-radius: 20px;
+      padding: 20px;
+      text-align: center;
+      margin: 20px auto;
+      width: 80%;
+    }
+    #drop-area.highlight {
+      border-color: #008000;
+    }
+    #file-msg {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container" id="password-page">
+  <div class="password-form" id="password-form">
+    <form>
+      <label for="password">Password:</label><br>
+      <input type="password" id="password" name="password"><br>
+      <button type="button" onclick="checkPassword()">Submit</button>
+    </form>
+  </div>
+</div>
+
+<div id="drop-area" style="display: none;">
+  <div id="file-msg">Drag & Drop files here</div>
+</div>
+
+<script>
+  function checkPassword() {
+    const password = document.getElementById('password').value;
+    if (password.toLowerCase() === 'cloud') {
+      // Password is 'cloud', hide password form and show drag and drop area
+      document.getElementById('password-page').style.display = 'none';
+      document.getElementById('drop-area').style.display = 'block';
+
+      // Prevent default drag behaviors
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        document.getElementById('drop-area').addEventListener(eventName, preventDefaults, false);
+      });
+
+      // Highlight drop area when item is dragged over it
+      ['dragenter', 'dragover'].forEach(eventName => {
+        document.getElementById('drop-area').addEventListener(eventName, highlight, false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        document.getElementById('drop-area').addEventListener(eventName, unhighlight, false);
+      });
+
+      // Handle dropped files
+      document.getElementById('drop-area').addEventListener('drop', handleDrop, false);
+    } else {
+      // Invalid password, show alert
+      alert('Invalid password');
+    }
+  }
+
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  function highlight() {
+    document.getElementById('drop-area').classList.add('highlight');
+  }
+
+  function unhighlight() {
+    document.getElementById('drop-area').classList.remove('highlight');
+  }
+
+  function handleDrop(e) {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+
+    handleFiles(files);
+  }
+
+  function handleFiles(files) {
+    const fileMsg = document.getElementById('file-msg');
+    if (files.length === 0) {
+      fileMsg.textContent = "No files selected";
+    } else {
+      const file = files[0];
+      fileMsg.textContent = `File name: ${file.name}`;
+      // Here you can implement code to handle the file, like uploading it to the server
+      // For now, let's just log the file object
+      console.log(file);
+    }
+  }
+</script>
+
+</body>
+</html>
+
+
